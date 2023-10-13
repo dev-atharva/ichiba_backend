@@ -29,8 +29,9 @@ class PopularItems(APIView):
                     # "genreId": item_data.get("genreId", None),
                     # "itemCaption": item_data.get("itemCaption", None),
                     "itemName": item_data.get("itemName", None),
+                    "reviewAverage": item_data.get("reviewAverage", None),
                     "itemPrice": item_data.get("itemPrice", None),
-                    # "itemUrl": item_data.get("itemUrl", None),
+                    "itemUrl": item_data.get("itemUrl", None),
                     "itemCode": item_data.get("itemCode", None),
                     "rank": item_data.get("rank", None),
                     # "shopName": item_data.get("shopName", None),
@@ -67,17 +68,18 @@ class InfluencerProductRecommendations(APIView):
                     "products": products,
                     "name": influencer.name,
                     "image_url": influencer.image_url,
+                    "description": influencer.description,
                 }
             )
         except Influencer.DoesNotExist:
             return Response({"error": "Influencer does not exist."}, status=404)
 
     def get_product_data_from_api(self, product_id):
-        api_url = f"https://app.rakuten.co.jp/services/api/IchibaItem/Search/20220601?format=json&itemCode={product_id}&applicationId=1018947431031079367"
+        api_url = f"https://app.rakuten.co.jp/services/api/Product/Search/20170426?format=json&productId={product_id}&applicationId=1018947431031079367"
         response = requests.get(api_url)
 
         if response.status_code == 200 and response.json()["hits"] >= 1:
-            return response.json().get("Items", [])[0]["Item"]
+            return response.json().get("Products", [])[0]["Product"]
         else:
             return "Not Found"
 
@@ -129,7 +131,7 @@ class RecommendationListView(APIView):
 
     def get_products_for_genres(self, genre_ids):
         products = []
-        genre_name_cache = {}  # Corrected variable name
+        genre_name_cache = {}
         for genre_id in genre_ids:
             if genre_id in genre_name_cache:
                 genre_name = genre_name_cache[genre_id]
@@ -139,7 +141,7 @@ class RecommendationListView(APIView):
             products_for_genre = self.fetch_products_for_genre(genre_id)
 
             for product in products_for_genre:
-                product["genreName"] = genre_name  # Corrected variable name
+                product["genreName"] = genre_name
             products.extend(products_for_genre)
         return products
 
@@ -179,6 +181,7 @@ class RecommendationListView(APIView):
                     "productUrlPC": product_data["productUrlPC"],
                     "mediumImageUrl": product_data["mediumImageUrl"],
                     "productCaption": product_data["productCaption"],
+                    "productId": product_data["productId"],
                 }
                 formatted_products.append(formatted_product)
 

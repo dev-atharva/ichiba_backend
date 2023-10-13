@@ -13,6 +13,7 @@ class Influencer(models.Model):
     name = models.CharField(max_length=255)
     product_recommendations = models.CharField(max_length=255)
     image_url = models.CharField(max_length=200)
+    description = models.TextField()
 
 
 class RecommendationList(models.Model):

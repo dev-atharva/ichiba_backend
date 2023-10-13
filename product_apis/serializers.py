@@ -52,4 +52,4 @@ class RecommendationListSerializer(serializers.ModelSerializer):
 class InfluencerSerialzer(serializers.ModelSerializer):
     class Meta:
         model = Influencer
-        fields = ("name", "image_url")
+        fields = ("name", "image_url", "id")
