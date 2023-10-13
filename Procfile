@@ -1,0 +1,1 @@
+web: gunicorn 'ichiba_app.wsgi'
